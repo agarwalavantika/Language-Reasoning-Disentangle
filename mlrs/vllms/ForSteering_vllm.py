@@ -9,7 +9,7 @@ import torch
 from vllm import LLM, SamplingParams
 from transformers import AutoTokenizer
 
-from mlrs.vllms.thu_vllm import create_llm
+# from mlrs.vllms.thu_vllm import create_llm
 
 class ForSteeringVLLM:
     def __init__(
@@ -34,8 +34,8 @@ class ForSteeringVLLM:
             )
             self.lm_model = self.model.llm_engine.model_executor.driver_worker.model_runner.model
             self.model.llm_engine.model_executor.driver_worker.model_runner.return_hidden_states = True
-        elif steering_level == "all":
-            self.model = None
+        # elif steering_level == "all":
+        #     self.model = None
     
         self.model_name_or_path = model_name_or_path
         self.tokenizer = AutoTokenizer.from_pretrained(model_name_or_path)
@@ -93,14 +93,14 @@ class ForSteeringVLLM:
         self.steering_strength = steering_strength
         
         
-        if self.steering_level == "all":
-            self.model = create_llm(
-                steering_strength=steering_strength,
-                steering_vector_path=vector_path,
-                model_path=self.model_name_or_path,
-                max_model_lens=self.max_model_lens,
-                tensor_parallel_size=self.tensor_parallel_size
-            )
+        # if self.steering_level == "all":
+        #     self.model = create_llm(
+        #         steering_strength=steering_strength,
+        #         steering_vector_path=vector_path,
+        #         model_path=self.model_name_or_path,
+        #         max_model_lens=self.max_model_lens,
+        #         tensor_parallel_size=self.tensor_parallel_size
+        #     )
 
                 
     @staticmethod
@@ -110,14 +110,7 @@ class ForSteeringVLLM:
     
 
     def def_hook_steer_fn(self, moudle, input, output):
-        '''
-        output:
-        (
-            hidden_states,      # shape: [batch_size, seq_len, hidden_dim]
-            maybe_kv_cache      # shape: depends on implementation, often [batch_size, num_heads, seq_len, head_dim]
-        )
 
-        '''
         if self.steering_strength == 0:
             return output
         self.fn_num += 1 
@@ -130,9 +123,7 @@ class ForSteeringVLLM:
             new_shape = res.shape
             self.vector = self.vector.to(res.device)
             new_tensor = res + self.steering_strength * self.vector[self.fn_num % self.layer_num - 1]
-            '''
-            这里貌似得去掉kv cache
-            '''
+
             # new_output = (new_tensor, output1) + output[1:]
             return (new_tensor, ) + output[1:]
         else:

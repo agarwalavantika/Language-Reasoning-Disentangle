@@ -14,8 +14,7 @@ from mlrs.vllms.ForSteering_vllm_Mlrs import ForSteeringVLLMMlrs
 from mlrs.lib._df import read_file, save_file
 from freeEvalLM.src.Task import TaskLoader
 
-from vllm import ModelRegistry
-from mlrs.vllms.steer_qwen2_vllm_lens import MlrsSteerQwen2ForCausalLM
+# from vllm import ModelRegistry
 
 
 def main(
@@ -57,9 +56,10 @@ def main(
     # 记录模型加载开始时间
     model_load_start_time = time.time()
     
-    if steering_method == "Mlrs" and steering_level=="all":
-        ModelRegistry.register_model("Qwen2ForCausalLM", MlrsSteerQwen2ForCausalLM)
+    if steering_method == "vanilla" and steering_level=="prompt":
         fsvllm = ForSteeringVLLM(model_name_or_path=model_name_or_path, temperature=temperature, top_p=top_p, tensor_parallel_size=tensor_parallel_size, max_tokens=max_tokens, max_model_lens=max_model_lens, steering_layers=steering_layers, steering_level=steering_level)
+    elif steering_method == "Mlrs" and steering_level=="prompt":
+        fsvllm = ForSteeringVLLMMlrs(model_name_or_path=model_name_or_path, temperature=temperature, top_p=top_p, tensor_parallel_size=tensor_parallel_size, max_tokens=max_tokens, max_model_lens=max_model_lens, steering_layers=steering_layers, steering_layers2 = steering_layers2, steering_level=steering_level)
     else:
         raise ValueError(f"Unknown steering method: {steering_method}")
 
@@ -170,7 +170,9 @@ def main(
         msg_list = [[{'role': 'system', 'content': f"{sys_prompt}"}, {'role': 'user', 'content': d}] for  d in  query_lines] 
         prompt_token_ids_list = fsvllm.tokenizer.apply_chat_template(msg_list, add_generation_prompt=True)
 
-
+    if steering_level == "prompt":
+        fsvllm.reset_hooks_return_activations()
+        fsvllm.init_hooks_steer_activations()
     fsvllm.init_vector(vector_path, steering_strength)
 
     inference_start_time = time.time()
