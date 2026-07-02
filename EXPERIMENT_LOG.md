@@ -64,3 +64,28 @@ Reasoning Fidelity: 0.9091
 
 Purpose:
 Baseline for comparison with steering.
+
+## Experiment 002
+
+Task: MGSM (Full)
+
+Model: DeepSeek-R1-Distill-Qwen-7B
+
+Method: Baseline (No Steering)
+
+Steering Strength:
+[0,0]
+
+Dataset:
+2750 examples
+
+Results
+
+Accuracy: 0.3684
+
+Response Fidelity: 0.5389
+
+Reasoning Fidelity: 0.7513
+
+Status:
+SUCCESS
