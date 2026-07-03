@@ -89,3 +89,33 @@ Reasoning Fidelity: 0.7513
 
 Status:
 SUCCESS
+
+## Experiment 003
+
+Task: MGSM (Full)
+
+Model:
+DeepSeek-R1-Distill-Qwen-7B
+
+Method:
+MLRS Steering
+
+Steering Strength:
+[0.3, -0.1]
+
+Results
+
+Accuracy: 0.3651
+
+Response Fidelity: 0.5865
+
+Reasoning Fidelity: 0.8989
+
+Comparison with baseline
+
+Accuracy Δ = -0.0033
+Response Fidelity Δ = +0.0476
+Reasoning Fidelity Δ = +0.1476
+
+Status:
+SUCCESS
