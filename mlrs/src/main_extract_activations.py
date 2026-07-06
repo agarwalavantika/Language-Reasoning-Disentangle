@@ -42,10 +42,15 @@ def main(
         elif model_type == "transformers":
             fsvllm = ForSteeringVLLMTransformers(model_name_or_path=model_name_or_path, temperature=temperature, top_p=top_p, max_tokens=1)        
 
-    reasoning_parser_obj = ReasoningParserManager.get_reasoning_parser(reasoning_parser)(fsvllm.tokenizer)
-    think_start_token = reasoning_parser_obj.think_start_token
-    think_end_token = reasoning_parser_obj.think_end_token
-    solution_start_token = reasoning_parser_obj.solution_start_token if hasattr(reasoning_parser_obj, "solution_start_token") else ""
+    if if_think:
+        reasoning_parser_obj = ReasoningParserManager.get_reasoning_parser(reasoning_parser)(fsvllm.tokenizer)
+        think_start_token = reasoning_parser_obj.think_start_token
+        think_end_token = reasoning_parser_obj.think_end_token
+        solution_start_token = reasoning_parser_obj.solution_start_token if hasattr(reasoning_parser_obj, "solution_start_token") else ""
+    else:
+        think_start_token = ""
+        think_end_token = ""
+        solution_start_token = ""
 
     input_data_df = read_file(input_path)
     
